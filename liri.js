@@ -1,4 +1,7 @@
+//break each API provider into its own file for readibility and ease of collaboration
 var twitterFunctions = require("./twitterfunctions.js");
+var spotify = require('spotify');
+
 
 var liriCommand = process.argv[2];
 var liriArgument = process.argv[3];
@@ -6,24 +9,29 @@ var liriArgument = process.argv[3];
 
 switch (liriCommand) {
     case "my-tweets":
+        // This will show your last 20 tweets and when they were created at in your terminal/bash window.
         twitterFunctions.getTweets();        
-
-        
-
         break;
-    case "spotify-this-song ":
-        console.log("spotify-this-song");
+    case "spotify-this-song":
         // if no song is provided then your program will default to
         // "The Sign" by Ace of Base
-        if (liriArgument === "") {
+        if (typeof(liriArgument) === "undefined") {
             liriArgument = "The Sign";
         }
 
-        // This will show the following information about the song in your terminal/bash window
-        // Artist(s)
-        // The song's name
-        // A preview link of the song from Spotify
-        // The album that the song is from
+        
+        spotify.search({ type: 'track', query: liriArgument }, function(err, data) {
+        if ( err ) {
+            console.log('Error occurred: ' + err);
+        return;
+        }
+            // This will show the following information about the song in your terminal/bash window
+            console.log("The artist(s) are: " + data.tracks.items[0].artists[0].name); // Artist(s)
+            console.log("The songs name is: " + data.tracks.items[0].name); // The song's name
+            console.log("The album is: " + data.tracks.items[0].album.name); // The album that the song is from
+            console.log("The preview URL is: " + data.tracks.items[0].preview_url); // A preview link of the song from Spotify
+        });
+
 
         break;
     case "movie-this":
