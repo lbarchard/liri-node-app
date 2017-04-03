@@ -2,13 +2,35 @@
 var twitterFunctions = require("./twitterfunctions.js");
 var spotifyFunctions = require("./spotifyfunctions.js");
 var omdbFunctions = require("./omdbfunctions.js");
+var inquirer = require("inquirer");
+
 
 var fs = require("fs");
 
 var liriCommand = process.argv[2];
 var liriArgument = process.argv[3];
 
-liri(liriCommand, liriArgument)
+if (typeof(liriArgument) === "undefined") {
+    inquirer.prompt([
+        {
+            type: "list",
+            message: "Which command to execute?",
+            choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
+            name: "command"
+        },
+        {
+            type: "input",
+            message: "What are you searching for?",
+            name: "argument"
+        }
+    ]).then(function(liriChoices) {
+        liriCommand = liriChoices.command;
+        liriArgument = liriChoices.argument;
+        liri(liriCommand, liriArgument)
+    })
+}
+
+
 
 function liri(liriCommand, liriArgument) {
     switch (liriCommand) {
@@ -25,7 +47,7 @@ function liri(liriCommand, liriArgument) {
             // if no song is provided then your program will default to
             // "The Sign" by Ace of Base
             if (typeof(liriArgument) === "undefined") {
-                liriArgument = "The Sign";
+                liriArgument = "The Sign Ace of Base";
             }
             spotifyFunctions.getSong(liriArgument);
 
